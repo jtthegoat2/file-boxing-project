@@ -475,50 +475,53 @@
 
 </div>
 
-<!-- LOAD THREE.JS WITH MULTI-CDN FALLBACK -->
-<script>
-window.THREE_LOAD_PROMISE = new Promise((resolve, reject) => {
-  const cdns = [
-    'https://unpkg.com/three@0.150.1/build/three.min.js',
-    'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js'
-  ];
-  
-  function attemptLoad(index) {
-    if (index >= cdns.length) {
-      reject(new Error('Failed to load THREE.js from all CDNs'));
-      return;
-    }
-    
-    const script = document.createElement('script');
-    script.src = cdns[index];
-    script.onload = () => resolve(window.THREE);
-    script.onerror = () => attemptLoad(index + 1);
-    document.head.appendChild(script);
-  }
-  
-  attemptLoad(0);
-}).catch(err => {
-  document.getElementById('loadingMsg').classList.remove('show');
-  document.getElementById('errorMsg').classList.add('show');
-  document.getElementById('errorMsg').textContent = 'ERROR: Failed to load THREE.js. Check your internet connection.';
-  console.error('THREE.js loading failed:', err);
-  throw err;
-});
+<!--
+  LOAD THREE.JS VIA ES MODULES + IMPORT MAP (r160)
 
-window.FBX_LOADER_PROMISE = window.THREE_LOAD_PROMISE.then(() => new Promise((resolve, reject) => {
-  const loaderScript = document.createElement('script');
-  loaderScript.src = 'https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/FBXLoader.js';
-  loaderScript.onload = resolve;
-  loaderScript.onerror = () => reject(new Error('Failed to load FBXLoader'));
-  document.head.appendChild(loaderScript);
-})).catch(err => {
-  document.getElementById('loadingMsg').classList.remove('show');
-  document.getElementById('errorMsg').classList.add('show');
-  document.getElementById('errorMsg').textContent = 'ERROR: Failed to load FBXLoader. Check your internet connection.';
-  console.error('FBXLoader loading failed:', err);
-  throw err;
-});
+  The previous build pulled FBXLoader from three@0.150.1/examples/js/ — the
+  legacy UMD "examples/js" folder was removed from three.js, so that URL now
+  404s and the game always failed with "Failed to load". The modern, supported
+  way is ES modules + an import map, which is what we use below. FBXLoader's
+  internal dependencies (fflate, NURBSCurve) resolve automatically via the
+  "three/addons/" mapping.
+-->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script>
+  // Create the promise synchronously in a classic script so the main game
+  // script (which registers .then() on it during page parse) always finds it
+  // defined, regardless of when the deferred module below runs.
+  window.FBX_LOADER_PROMISE = new Promise((resolve, reject) => {
+    window.__resolveThree = resolve;
+    window.__rejectThree = reject;
+  });
+</script>
+
+<script type="module">
+  // Deferred module: import three + FBXLoader, then bridge them onto the
+  // global `THREE` object the (classic) game script expects.
+  try {
+    const THREE = await import('three');
+    const { FBXLoader } = await import('three/addons/loaders/FBXLoader.js');
+    // A module namespace object is read-only, so build a mutable copy that
+    // carries every three export plus FBXLoader for `new THREE.FBXLoader()`.
+    window.THREE = Object.assign({}, THREE, { FBXLoader });
+    window.__resolveThree(window.THREE);
+  } catch (err) {
+    document.getElementById('loadingMsg').classList.remove('show');
+    document.getElementById('errorMsg').classList.add('show');
+    document.getElementById('errorMsg').textContent =
+      'ERROR: Failed to load THREE.js / FBXLoader from CDN. Check your internet connection.';
+    console.error('THREE.js module load failed:', err);
+    window.__rejectThree(err);
+  }
 </script>
 
 <!-- MAIN GAME CODE (runs after THREE.js loads) -->
