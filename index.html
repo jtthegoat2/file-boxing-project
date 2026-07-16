@@ -112,6 +112,25 @@
   .charCard .cStat{ font-size:10px; color:var(--muted); }
   .charCard .cOv{ font-size:14px; font-family:'Bebas Neue'; color:var(--gold); margin-top:4px; }
 
+  .superstarsLayout{ display:grid; grid-template-columns:1.1fr .9fr; gap:10px; }
+  .superstarsPanel{ background:rgba(0,0,0,.28); border:1px solid var(--line); padding:8px; }
+  .upgradeList{ display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .upgradeCard{ border:1px solid var(--line); background:rgba(0,0,0,.28); padding:8px; }
+  .upgradeCard .uTop{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+  .upgradeCard .uLabel{ font-size:11px; letter-spacing:1px; color:#fff; }
+  .upgradeCard .uLevel{ font-size:10px; color:var(--gold); }
+  .upgradeCard .uDesc{ font-size:10px; color:var(--muted); margin-bottom:6px; }
+  .upgradeBtn{ border:1px solid var(--line); background:#161619; color:#fff; padding:6px 8px; font-size:10px; letter-spacing:1px; cursor:pointer; }
+  .upgradeBtn:hover{ border-color:var(--gold); color:var(--gold); }
+  .upgradeBtn.disabled{ opacity:.4; cursor:not-allowed; }
+  .menuHint{ font-size:10px; letter-spacing:1px; color:var(--muted); margin-top:6px; }
+
+  #pauseOverlay{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:10; background:rgba(0,0,0,.68); backdrop-filter:blur(4px); }
+  #pauseOverlay.hidden{ display:none !important; }
+  .pauseCard{ text-align:center; padding:24px 34px; border:1px solid var(--line); background:rgba(10,10,12,.9); box-shadow:0 0 30px rgba(0,0,0,.35); }
+  .pauseCard .pauseTitle{ font-family:'Bebas Neue'; font-size:36px; letter-spacing:4px; color:var(--gold); }
+  .pauseCard .pauseSub{ font-size:12px; letter-spacing:2px; color:var(--muted); margin-top:6px; }
+
   /* center column: arena preview */
   #arenaPreview{
     grid-row:1/2; position:relative;
@@ -216,6 +235,18 @@
   #clockWrap{ text-align:center; }
   #roundLabel{ font-size:11px; letter-spacing:4px; color:var(--gold); text-align:center; }
 
+  /* New HUD Elements: Stamina, Stats, Block */
+  .statBar{ height:8px; background:#1a1a1e; border:1px solid #333; margin-top:3px; position:relative; }
+  .statFill{ height:100%; transition:width .1s; }
+  .p1 .statFill{ background:linear-gradient(90deg, #0d63c9, #4fb2ff); }
+  .p2 .statFill{ background:linear-gradient(90deg, #ff5158, #c9130d); margin-left:auto; }
+  .staminaLabel{ font-size:10px; letter-spacing:1px; color:var(--muted); margin-top:3px; }
+  .statLabels{ display:flex; gap:6px; font-size:9px; letter-spacing:1px; color:var(--muted); margin-top:2px; margin-bottom:2px; }
+  .statLabels span{ flex:1; }
+  .blockMeter{ height:12px; background:#1a1a1e; border:1px solid #333; margin-top:4px; position:relative; overflow:hidden; }
+  .blockFill{ height:100%; background:linear-gradient(90deg, #ffd700, #ffed4e); transition:width .1s; }
+  .blockLabel{ font-size:9px; color:var(--muted); margin-top:2px; }
+
   #controlsHint{
     position:absolute; bottom:14px; left:0; right:0; display:flex; justify-content:center; padding:0 26px;
     font-size:11px; letter-spacing:1px; color:#aaa; z-index:5; pointer-events:none;
@@ -318,41 +349,6 @@
               <span class="val" id="stat-lastResult">—</span>
             </div>
           </div>
-            <div class="pageTitle" style="margin-top:12px;">SKILL POINTS & UPGRADES</div>
-            <div id="upgradesPanel" style="padding:8px;">
-              <div class="statRow">
-                <span class="label">PLAYER SKILL POINTS</span>
-                <span class="val" id="playerSkillPts">0</span>
-              </div>
-              <div class="statRow">
-                <span class="label">CPU SKILL POINTS</span>
-                <span class="val" id="cpuSkillPts">0</span>
-              </div>
-              <div style="margin-top:8px; display:grid; grid-template-columns:1fr 80px 80px; gap:8px; align-items:center;">
-                <div style="font-size:12px; color:var(--muted);">Health</div>
-                <div style="text-align:center;"> <button class="resultBtn" id="dec_hp">-</button> <span id="player_hp" style="padding:0 8px;">0</span> <button class="resultBtn" id="inc_hp">+</button> </div>
-                <div style="text-align:center;"> <span style="font-size:11px; color:var(--muted);">(+10 HP /pt)</span> </div>
-              </div>
-              <div style="margin-top:6px; display:grid; grid-template-columns:1fr 80px 80px; gap:8px; align-items:center;">
-                <div style="font-size:12px; color:var(--muted);">Stamina</div>
-                <div style="text-align:center;"> <button class="resultBtn" id="dec_stam">-</button> <span id="player_stam" style="padding:0 8px;">0</span> <button class="resultBtn" id="inc_stam">+</button> </div>
-                <div style="text-align:center;"> <span style="font-size:11px; color:var(--muted);">(faster recovery)</span> </div>
-              </div>
-              <div style="margin-top:6px; display:grid; grid-template-columns:1fr 80px 80px; gap:8px; align-items:center;">
-                <div style="font-size:12px; color:var(--muted);">Energy</div>
-                <div style="text-align:center;"> <button class="resultBtn" id="dec_energy">-</button> <span id="player_energy" style="padding:0 8px;">0</span> <button class="resultBtn" id="inc_energy">+</button> </div>
-                <div style="text-align:center;"> <span style="font-size:11px; color:var(--muted);">(improves block)</span> </div>
-              </div>
-              <div style="margin-top:6px; display:grid; grid-template-columns:1fr 80px 80px; gap:8px; align-items:center;">
-                <div style="font-size:12px; color:var(--muted);">Damage</div>
-                <div style="text-align:center;"> <button class="resultBtn" id="dec_dmg">-</button> <span id="player_dmg" style="padding:0 8px;">0</span> <button class="resultBtn" id="inc_dmg">+</button> </div>
-                <div style="text-align:center;"> <span style="font-size:11px; color:var(--muted);">(+8% damage /pt)</span> </div>
-              </div>
-              <div style="margin-top:8px; display:flex; gap:8px;">
-                <div class="resultBtn" id="resetUpgrades">RESET</div>
-                <div style="flex:1"></div>
-              </div>
-            </div>
 
           <!-- CAREER Page -->
           <div id="page-career" class="backstagePage">
@@ -386,7 +382,24 @@
           <!-- SUPERSTARS Page -->
           <div id="page-superstars" class="backstagePage">
             <div class="pageTitle">FIGHTER ROSTER</div>
-            <div class="charGrid" id="rosterGrid"></div>
+            <div class="superstarsLayout">
+              <div class="superstarsPanel">
+                <div class="charGrid" id="rosterGrid"></div>
+              </div>
+              <div class="superstarsPanel">
+                <div class="pageTitle" style="margin-bottom:6px;">CUSTOM UPGRADES</div>
+                <div class="statRow highlight">
+                  <span class="label">ACTIVE BOXER</span>
+                  <span class="val" id="upgradeBoxerName">—</span>
+                </div>
+                <div class="statRow">
+                  <span class="label">AVAILABLE POINTS</span>
+                  <span class="val" id="upgradePoints">0</span>
+                </div>
+                <div class="menuHint">Spend points earned from wins to improve your fighter.</div>
+                <div class="upgradeList" id="upgradeList"></div>
+              </div>
+            </div>
           </div>
 
           <!-- OPTIONS Page -->
@@ -482,6 +495,15 @@
       <div class="hpBlock p1">
         <div class="hpName"><span id="p1Name">YOU</span><span id="p1Pct">100</span></div>
         <div class="hpBar"><div class="hpFill" id="p1Fill"></div></div>
+        <div class="staminaLabel">STAMINA</div>
+        <div class="statBar"><div class="statFill" id="p1Stamina"></div></div>
+        <div class="statLabels">
+          <span>HEAD <span id="p1Head">100</span>%</span>
+          <span>BODY <span id="p1Body">100</span>%</span>
+          <span>LEGS <span id="p1Legs">100</span>%</span>
+        </div>
+        <div class="blockLabel">BLOCK</div>
+        <div class="blockMeter"><div class="blockFill" id="p1Block"></div></div>
       </div>
       <div id="clockWrap">
         <div id="roundLabel">VS CPU</div>
@@ -490,11 +512,27 @@
       <div class="hpBlock p2">
         <div class="hpName"><span id="p2Pct">100</span><span id="p2Name">CPU</span></div>
         <div class="hpBar"><div class="hpFill" id="p2Fill"></div></div>
+        <div class="staminaLabel">STAMINA</div>
+        <div class="statBar"><div class="statFill" id="p2Stamina"></div></div>
+        <div class="statLabels">
+          <span>HEAD <span id="p2Head">100</span>%</span>
+          <span>BODY <span id="p2Body">100</span>%</span>
+          <span>LEGS <span id="p2Legs">100</span>%</span>
+        </div>
+        <div class="blockLabel">BLOCK</div>
+        <div class="blockMeter"><div class="blockFill" id="p2Block"></div></div>
       </div>
     </div>
 
     <div id="controlsHint" class="hidden">
-      <span>MOVE&#58;WASD&#8195;JAB&#58;J&#8195;POWER PUNCH&#58;K&#8195;BLOCK&#58;SHIFT</span>
+      <span>MOVE&#58;WASD&#8195;JAB&#58;J&#8195;POWER&#58;K&#8195;BLOCK&#58;SHIFT&#8195;PAUSE&#58;Q&#8195;RUN&#58;R&#8195;GRAPPLE&#58;L</span>
+    </div>
+
+    <div id="pauseOverlay" class="hidden">
+      <div class="pauseCard">
+        <div class="pauseTitle">PAUSED</div>
+        <div class="pauseSub">Press Q to resume the fight</div>
+      </div>
     </div>
 
     <div id="centerText"><div class="big display" id="bigText"></div></div>
@@ -523,9 +561,12 @@
 window.AUDIO = (function(){
   const sounds = {
     menu: 'sound/Menu Music.wav',
+    BLAZE: 'sound/Dr. Dre - Still D.R.E. (Instrumental).mp3',
     REAPER: 'sound/Travis Scott - SICKO MODE (Instrumental).mp3',
     PHOENIX: 'sound/DMX - Ruff Ryders Anthem.mp3',
+    TITAN: 'sound/Hypnotize (Instrumental) (2014 Remaster).mp3',
     VIPER: 'sound/Kodak Black - ZEZE.mp3',
+    KAIJU: 'sound/Wu-Tang Clan - (Instrumental).mp3',
     SHOCKWAVE: 'sound/50 Cent - Many Men) (Instrumental).mp3'
   };
 
@@ -656,6 +697,69 @@ let picks = { p1:null, p2:null };
 let timeOptions = [60,90,120,180,300];
 let timeIdx = timeOptions.indexOf(120);
 let entranceOn = true;
+let gamePaused = false;
+let grappleActive = false;
+let grappleTimer = 0;
+let upgradeState = loadUpgradeState();
+const upgradeDefs = [
+  { key:'stamina', label:'STAMINA BOOST', desc:'Recover energy faster between exchanges.', baseCost:3 },
+  { key:'guard', label:'GUARD RECOVERY', desc:'Block meters refill more quickly.', baseCost:3 },
+  { key:'power', label:'POWER PUNCH', desc:'Increase damage on heavy strikes.', baseCost:4 },
+  { key:'grapple', label:'GRAPPLE MASTERY', desc:'Grapples land more reliably and last longer.', baseCost:4 }
+];
+
+function loadUpgradeState(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('ignite-upgrades'));
+    if(saved && typeof saved === 'object') return saved;
+  }catch(e){}
+  return {};
+}
+function saveUpgradeState(){
+  try{ localStorage.setItem('ignite-upgrades', JSON.stringify(upgradeState)); }catch(e){}
+}
+function getBoxerUpgradeState(boxerName){
+  const key = (boxerName||'BLAZE').toUpperCase();
+  if(!upgradeState[key]) upgradeState[key] = { stamina:0, guard:0, power:0, grapple:0 };
+  return upgradeState[key];
+}
+function renderUpgradeMenu(){
+  const boxerName = picks.p1!==null ? CHARACTERS[picks.p1].name : 'BLAZE';
+  const points = careerStats.skillPointsByCharacter[boxerName] || 0;
+  document.getElementById('upgradeBoxerName').textContent = boxerName;
+  document.getElementById('upgradePoints').textContent = points;
+  const boxerUpgrades = getBoxerUpgradeState(boxerName);
+  const listEl = document.getElementById('upgradeList');
+  listEl.innerHTML = upgradeDefs.map(def => {
+    const level = boxerUpgrades[def.key] || 0;
+    const cost = def.baseCost + level*2;
+    const canAfford = points >= cost;
+    return `
+      <div class="upgradeCard">
+        <div class="uTop"><span class="uLabel">${def.label}</span><span class="uLevel">LVL ${level}</span></div>
+        <div class="uDesc">${def.desc}</div>
+        <div class="statRow" style="padding:0; border-bottom:none;">
+          <span class="label">COST</span>
+          <span class="val">${cost}</span>
+        </div>
+        <button class="upgradeBtn ${canAfford ? '' : 'disabled'}" data-upgrade="${def.key}">${canAfford ? 'BUY' : 'LOCKED'}</button>
+      </div>`;
+  }).join('');
+}
+function buyUpgrade(key){
+  const boxerName = picks.p1!==null ? CHARACTERS[picks.p1].name : 'BLAZE';
+  const def = upgradeDefs.find(item => item.key === key);
+  if(!def) return;
+  const boxerUpgrades = getBoxerUpgradeState(boxerName);
+  const cost = def.baseCost + (boxerUpgrades[key]||0)*2;
+  if((careerStats.skillPointsByCharacter[boxerName] || 0) < cost) return;
+  careerStats.skillPointsByCharacter[boxerName] -= cost;
+  boxerUpgrades[key] = (boxerUpgrades[key]||0) + 1;
+  saveUpgradeState();
+  renderUpgradeMenu();
+}
+
+/* ----- MENU PAGE SWITCHER ----- */
 
 /* ----- CAREER STATS ----- */
 let careerStats = {
@@ -666,69 +770,10 @@ let careerStats = {
   totalDamageDealt: 0,
   currentStreak: 0,
   lastResult: '—',
-  recentMatches: []
+  recentMatches: [],
+  skillPointsByCharacter: { BLAZE:0, REAPER:0, PHOENIX:0, TITAN:0, VIPER:0, KAIJU:0, SHOCKWAVE:0 }
 };
 
-/* ----- SKILL POINTS / UPGRADES ----- */
-let playerSkillPts = 0;
-let cpuSkillPts = 0;
-const playerUpgrades = { hp:0, stamina:0, energy:0, damage:0 };
-const cpuUpgrades = { hp:0, stamina:0, energy:0, damage:0 };
-
-function loadUpgrades(){
-  try{
-    const s = localStorage.getItem('boxing_upgrades');
-    if(s){
-      const obj = JSON.parse(s);
-      Object.assign(playerUpgrades, obj.playerUpgrades||{});
-      Object.assign(cpuUpgrades, obj.cpuUpgrades||{});
-      playerSkillPts = obj.playerSkillPts||0;
-      cpuSkillPts = obj.cpuSkillPts||0;
-    }
-  }catch(e){}
-}
-function saveUpgrades(){
-  try{ localStorage.setItem('boxing_upgrades', JSON.stringify({ playerUpgrades, cpuUpgrades, playerSkillPts, cpuSkillPts })); }catch(e){}
-}
-
-function updateUpgradesUI(){
-  document.getElementById('playerSkillPts').textContent = playerSkillPts;
-  document.getElementById('cpuSkillPts').textContent = cpuSkillPts;
-  document.getElementById('player_hp').textContent = playerUpgrades.hp;
-  document.getElementById('player_stam').textContent = playerUpgrades.stamina;
-  document.getElementById('player_energy').textContent = playerUpgrades.energy;
-  document.getElementById('player_dmg').textContent = playerUpgrades.damage;
-}
-
-function allocateUpgrade(target, stat, delta){
-  const up = target==='player' ? playerUpgrades : cpuUpgrades;
-  const pts = target==='player' ? () => playerSkillPts : () => cpuSkillPts;
-  if(delta>0){
-    if((target==='player'?playerSkillPts:cpuSkillPts) <= 0) return;
-    up[stat] = (up[stat]||0) + delta;
-    if(target==='player') playerSkillPts -= delta; else cpuSkillPts -= delta;
-  }else{
-    if((up[stat]||0) <= 0) return;
-    up[stat] = Math.max(0, up[stat] + delta);
-    if(target==='player') playerSkillPts -= delta; else cpuSkillPts -= delta; // delta is negative -> add back
-  }
-  saveUpgrades(); updateUpgradesUI();
-}
-
-function autoAllocateCpu(){
-  // simple even distribution across stats when cpu gains points
-  const order = ['hp','damage','stamina','energy'];
-  while(cpuSkillPts>0){
-    for(const s of order){
-      if(cpuSkillPts<=0) break;
-      cpuUpgrades[s] = (cpuUpgrades[s]||0)+1;
-      cpuSkillPts--;
-    }
-  }
-  saveUpgrades(); updateUpgradesUI();
-}
-
-loadUpgrades();
 
 /* ----- MENU PAGE SWITCHER ----- */
 const menuItems = document.querySelectorAll('#mainMenuList li');
@@ -738,6 +783,7 @@ function switchPage(pageId) {
   backstagePages.forEach(p => p.classList.remove('active'));
   const page = document.getElementById(`page-${pageId}`);
   if(page) page.classList.add('active');
+  if(pageId === 'superstars') renderUpgradeMenu();
 }
 
 menuItems.forEach((item, idx) => {
@@ -774,15 +820,14 @@ function updateCareerStats(winner, loser, isKO){
     careerStats.currentStreak++;
     if(isKO) careerStats.totalKOs++;
     careerStats.lastResult = 'WIN';
-    // award skill points to player
-    playerSkillPts += 5;
+    // Award 5 skill points for player win
+    careerStats.skillPointsByCharacter[p1F.name] += 5;
   } else {
     careerStats.losses++;
     careerStats.currentStreak = 0;
     careerStats.lastResult = 'LOSS';
-    // award skill points to CPU and auto allocate
-    cpuSkillPts += 5;
-    autoAllocateCpu();
+    // Award 5 skill points for CPU win (CPU doesn't get points to character but could be tracked separately)
+    careerStats.skillPointsByCharacter[p2F.name] += 5;
   }
   
   careerStats.recentMatches.unshift({
@@ -794,8 +839,8 @@ function updateCareerStats(winner, loser, isKO){
   if(careerStats.recentMatches.length > 5) careerStats.recentMatches.pop();
 
   updateStatsUI();
-  updateUpgradesUI();
 }
+
 
 function updateStatsUI(){
   document.getElementById('stat-matchesPlayed').textContent = careerStats.matchesPlayed;
@@ -815,6 +860,7 @@ function updateStatsUI(){
       <span class="val" style="font-size:10px;">${m.method}</span>
     </div>
   `).join('');
+  renderUpgradeMenu();
 }
 
 /* ----- PREVIEW FIGHTER FACTORY ----- */
@@ -888,6 +934,7 @@ CHARACTERS.forEach((c,i)=>{
     refreshCards();
     refreshVs();
     updateStartBtn();
+    renderUpgradeMenu();
   });
   cardGrid.appendChild(card);
 });
@@ -898,6 +945,7 @@ function refreshCards(){
     if(picks.p1===i) el.classList.add('selP1');
     if(picks.p2===i) el.classList.add('selP2');
   });
+  renderUpgradeMenu();
 }
 function refreshVs(){
   document.getElementById('vsP1').textContent = picks.p1!==null ? CHARACTERS[picks.p1].name : '—';
@@ -928,25 +976,16 @@ document.getElementById('entranceToggle').addEventListener('click',(e)=>{
   e.target.textContent = entranceOn ? 'ON':'OFF';
 });
 
+document.getElementById('upgradeList').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-upgrade]');
+  if(btn) buyUpgrade(btn.dataset.upgrade);
+});
+
 // Initialize roster and stats on load
 initRoster();
 updateStatsUI();
- updateUpgradesUI();
 
-// Upgrade button handlers
-document.getElementById('inc_hp').addEventListener('click', ()=> allocateUpgrade('player','hp',1));
-document.getElementById('dec_hp').addEventListener('click', ()=> allocateUpgrade('player','hp',-1));
-document.getElementById('inc_stam').addEventListener('click', ()=> allocateUpgrade('player','stamina',1));
-document.getElementById('dec_stam').addEventListener('click', ()=> allocateUpgrade('player','stamina',-1));
-document.getElementById('inc_energy').addEventListener('click', ()=> allocateUpgrade('player','energy',1));
-document.getElementById('dec_energy').addEventListener('click', ()=> allocateUpgrade('player','energy',-1));
-document.getElementById('inc_dmg').addEventListener('click', ()=> allocateUpgrade('player','damage',1));
-document.getElementById('dec_dmg').addEventListener('click', ()=> allocateUpgrade('player','damage',-1));
-document.getElementById('resetUpgrades').addEventListener('click', ()=>{
-  playerSkillPts += (playerUpgrades.hp + playerUpgrades.stamina + playerUpgrades.energy + playerUpgrades.damage);
-  playerUpgrades.hp = playerUpgrades.stamina = playerUpgrades.energy = playerUpgrades.damage = 0;
-  saveUpgrades(); updateUpgradesUI(); updateStatsUI();
-});
+renderUpgradeMenu();
 
 document.getElementById('startMatchBtn').addEventListener('click', ()=>{
   if(picks.p1===null||picks.p2===null) return;
@@ -1079,30 +1118,68 @@ const crowd = new THREE.InstancedMesh(crowdGeo, crowdMat, 400);
 fScene.add(crowd);
 
 let arenaModel = null;
+function buildFallbackArena(){
+  const ring = new THREE.Mesh(
+    new THREE.CylinderGeometry(6.8, 6.8, 0.35, 48),
+    new THREE.MeshStandardMaterial({color:0x121217, roughness:0.95})
+  );
+  ring.position.y = 0.1;
+  fScene.add(ring);
+
+  const canvas = new THREE.Mesh(
+    new THREE.CylinderGeometry(5.2, 5.2, 0.08, 48),
+    new THREE.MeshStandardMaterial({color:0x1d1d2a, roughness:0.8})
+  );
+  canvas.position.y = 0.2;
+  fScene.add(canvas);
+
+  const ropes = new THREE.Mesh(
+    new THREE.TorusGeometry(6.1, 0.04, 12, 80),
+    new THREE.MeshStandardMaterial({color:0x8c6c24, roughness:0.4})
+  );
+  ropes.rotation.x = Math.PI/2;
+  ropes.position.y = 0.25;
+  fScene.add(ropes);
+
+  arenaModel = ring;
+}
+
 function loadArenaModel(){
   const loader = new THREE.FBXLoader();
-  const modelPath = encodeURI('boxing arena/boxing.fbx');
-  loader.load(modelPath, object => {
-    object.traverse(child => {
-      if(child.isMesh){
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
+  const candidates = [
+    './boxing arena/boxing.fbx',
+    'boxing arena/boxing.fbx',
+    'boxing%20arena/boxing.fbx'
+  ];
+
+  function tryLoad(index){
+    if(index >= candidates.length){
+      buildFallbackArena();
+      return;
+    }
+    loader.load(candidates[index], object => {
+      object.traverse(child => {
+        if(child.isMesh){
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      object.scale.setScalar(0.07);
+      object.rotation.y = Math.PI;
+      object.position.set(0, 0, 0);
+      arenaModel = object;
+      fScene.add(arenaModel);
+    }, undefined, err => {
+      console.warn('Arena model attempt failed:', candidates[index], err);
+      tryLoad(index + 1);
     });
-    object.scale.setScalar(0.07);
-    object.rotation.y = Math.PI;
-    object.position.set(0, 0, 0);
-    arenaModel = object;
-    fScene.add(arenaModel);
-  }, undefined, err => {
-    console.error('Arena model load error:', err);
-    document.getElementById('errorMsg').classList.add('show');
-    document.getElementById('errorMsg').textContent = 'ERROR: Could not load boxing arena model.';
-  });
+  }
+
+  tryLoad(0);
 }
 
 /* ----- FIGHTER FACTORY ----- */
-function createFighter(charData, side){
+function createFighter(charData){
   const group = new THREE.Group();
   const skin = 0xc79a73;
   const mat = new THREE.MeshStandardMaterial({color:charData.color, roughness:0.5, metalness:0.15});
@@ -1163,23 +1240,19 @@ function createFighter(charData, side){
   const leftLeg  = makeLeg(1);
   group.add(rightLeg.hip, leftLeg.hip);
 
-  const up = (side==='player') ? playerUpgrades : cpuUpgrades;
-  const maxHp = 100 + (up.hp||0) * 10;
-  const damageMul = 1 + (up.damage||0) * 0.08;
-  const stamina = (up.stamina||0) * 0.12; // affects attack speed / cooldown
-  const energy = (up.energy||0) * 0.12;   // affects block effectiveness
-  const blockReduction = Math.max(0.08, 0.22 - (up.energy||0) * 0.03);
-
   return {
     group, torso, head, rightArm, leftArm, rightLeg, leftLeg,
     color:charData.color, name:charData.name,
-    maxHp: maxHp, hp: maxHp, blocking:false,
-    damageMul: damageMul, stamina: stamina, energy: energy, blockReduction: blockReduction,
+    hp:100, blocking:false,
     attackAnim:null,
     walkPhase:0,
     facing:1,
     pos: new THREE.Vector3(),
     ko:false,
+    // New stat tracking
+    statDamage: { head:0, body:0, legs:0 },
+    blockMeter: 100,
+    stamina: 100,
   };
 }
 
@@ -1195,26 +1268,49 @@ let clock = new THREE.Clock();
 const keys = {};
 window.addEventListener('keydown', e=>{
   keys[e.code]=true;
-  handleAttackKey(e.code);
+  handleInputKey(e.code);
 });
-window.addEventListener('keyup', e=>{ keys[e.code]=false; });
+window.addEventListener('keyup', e=>{
+  keys[e.code]=false;
+  if(e.code === 'KeyR' && p1F) p1F.running = false;
+});
 
 const P1_KEYS = {
   forward:'KeyW', backward:'KeyD', strafeLeft:'KeyA', strafeRight:'KeyS',
   punch:'KeyJ', heavy:'KeyK', block:'ShiftLeft', block2:'ShiftRight'
 };
 
-function handleAttackKey(code){
+function handleInputKey(code){
   if(!fightActive || matchOver) return;
+  if(code === 'KeyQ'){ togglePause(); return; }
+  if(gamePaused) return;
+  if(code === 'KeyR'){ if(p1F) p1F.running = true; return; }
+  if(code === 'KeyL'){ startGrapple(p1F, p2F); return; }
   if(code===P1_KEYS.punch) startAttack(p1F,'light');
   if(code===P1_KEYS.heavy) startAttack(p1F,'heavy');
 }
 
 function startAttack(f, type){
   if(f.attackAnim || f.ko) return;
-  const baseDur = type==='light'?0.3:0.55;
-  const dur = baseDur * Math.max(0.6, 1 - (f.stamina||0)*0.45);
-  f.attackAnim = { type, t:0, hit:false, dur };
+  f.attackAnim = { type, t:0, hit:false, dur: type==='light'?0.3:0.55 };
+}
+
+function startGrapple(f, opponent){
+  if(!fightActive || matchOver || gamePaused || f.ko || opponent.ko || f.attackAnim || opponent.attackAnim) return;
+  const dist = f.group.position.distanceTo(opponent.group.position);
+  if(dist > 2.1) return;
+  grappleActive = true;
+  grappleTimer = 0.8;
+  const mid = new THREE.Vector3().addVectors(f.group.position, opponent.group.position).multiplyScalar(0.5);
+  f.group.position.lerp(mid, 0.35);
+  opponent.group.position.lerp(mid, 0.35);
+  showBigText('GRAPPLE!', 700);
+}
+
+function togglePause(){
+  if(!fightActive || matchOver) return;
+  gamePaused = !gamePaused;
+  document.getElementById('pauseOverlay').classList.toggle('hidden', !gamePaused);
 }
 
 /* ----- ENTRANCE SEQUENCE ----- */
@@ -1224,21 +1320,38 @@ function startMatch(){
   timeLeft = matchDuration;
   matchOver = false;
   fightActive = false;
+  gamePaused = false;
+  grappleActive = false;
+  grappleTimer = 0;
+  document.getElementById('pauseOverlay').classList.add('hidden');
   cpuState = { timer:0, action:'idle', attackCooldown:0.6, blockTimer:0 };
 
   if(p1F) fScene.remove(p1F.group);
   if(p2F) fScene.remove(p2F.group);
 
-  p1F = createFighter(CHARACTERS[picks.p1], 'player');
-  p2F = createFighter(CHARACTERS[picks.p2], 'cpu');
+  p1F = createFighter(CHARACTERS[picks.p1]);
+  p2F = createFighter(CHARACTERS[picks.p2]);
   fScene.add(p1F.group, p2F.group);
 
   document.getElementById('p1Name').textContent = p1F.name;
   document.getElementById('p2Name').textContent = p2F.name + ' (CPU)';
-  document.getElementById('p1Pct').textContent = Math.ceil(p1F.hp);
-  document.getElementById('p2Pct').textContent = Math.ceil(p2F.hp);
-  document.getElementById('p1Fill').style.width = Math.min(100, Math.round((p1F.hp / p1F.maxHp)*100)) + '%';
-  document.getElementById('p2Fill').style.width = Math.min(100, Math.round((p2F.hp / p2F.maxHp)*100)) + '%';
+  document.getElementById('p1Pct').textContent = 100;
+  document.getElementById('p2Pct').textContent = 100;
+  document.getElementById('p1Fill').style.width='100%';
+  document.getElementById('p2Fill').style.width='100%';
+  
+  // Initialize new HUD elements
+  document.getElementById('p1Stamina').style.width = '100%';
+  document.getElementById('p2Stamina').style.width = '100%';
+  document.getElementById('p1Head').textContent = '100';
+  document.getElementById('p1Body').textContent = '100';
+  document.getElementById('p1Legs').textContent = '100';
+  document.getElementById('p2Head').textContent = '100';
+  document.getElementById('p2Body').textContent = '100';
+  document.getElementById('p2Legs').textContent = '100';
+  document.getElementById('p1Block').style.width = '100%';
+  document.getElementById('p2Block').style.width = '100%';
+  
   document.getElementById('hud').classList.add('hidden');
   document.getElementById('controlsHint').classList.add('hidden');
   document.getElementById('resultScreen').style.display='none';
@@ -1428,16 +1541,20 @@ function updatePlayerControls(f, opponent, K, dt){
   if(keys[K.strafeRight]) moveVec.add(rightVec);
   if(keys[K.strafeLeft]) moveVec.sub(rightVec);
 
+  const runPressed = !!keys.KeyR && f.stamina > 0;
   let moving = false;
   if(moveVec.lengthSq() > 0.0001){
     moveVec.normalize();
-    f.group.position.x += moveVec.x*MOVE_SPEED*dt;
-    f.group.position.z += moveVec.z*MOVE_SPEED*dt;
+    const speed = MOVE_SPEED * (runPressed ? 1.65 : 1);
+    f.group.position.x += moveVec.x*speed*dt;
+    f.group.position.z += moveVec.z*speed*dt;
     f.group.position.x = THREE.MathUtils.clamp(f.group.position.x,-BOUND,BOUND);
     f.group.position.z = THREE.MathUtils.clamp(f.group.position.z,-BOUND,BOUND);
     f.walkPhase += dt*8;
     moving = true;
+    if(runPressed) f.stamina = Math.max(0, f.stamina - 0.45);
   }
+  if(!runPressed && f.running) f.running = false;
   f.blocking = !!(keys[K.block] || (K.block2 && keys[K.block2]));
   return moving;
 }
@@ -1496,9 +1613,7 @@ function updateCPU(cpu, player, dt){
   if(dist < 1.7 && cpuState.attackCooldown <= 0 && !cpu.attackAnim){
     const type = Math.random() < 0.72 ? 'light' : 'heavy';
     startAttack(cpu, type);
-    const baseCd = type==='heavy' ? (1.1+Math.random()*0.8) : (0.55+Math.random()*0.55);
-    const mod = Math.max(0.5, 1 - (cpu.stamina||0) * 0.06);
-    cpuState.attackCooldown = baseCd * mod;
+    cpuState.attackCooldown = type==='heavy' ? (1.1+Math.random()*0.8) : (0.55+Math.random()*0.55);
   }
 
   return moving;
@@ -1522,21 +1637,32 @@ function updateAttackAnim(f, opponent, dt){
 
   const hitWindowStart = anim.type==='light' ? 0.4 : 0.48;
   const hitWindowEnd   = anim.type==='light' ? 0.6 : 0.68;
-    if(!anim.hit && p>=hitWindowStart && p<=hitWindowEnd){
+  if(!anim.hit && p>=hitWindowStart && p<=hitWindowEnd){
     const dist = f.group.position.distanceTo(opponent.group.position);
     const range = anim.type==='light' ? 1.45 : 1.75;
     if(dist < range){
       anim.hit = true;
-      let dmgBase = anim.type==='light' ? (4+Math.random()*5) : (11+Math.random()*8);
-      let dmg = dmgBase * (f.damageMul||1);
-      if(opponent.blocking) dmg *= (opponent.blockReduction||0.22);
+      let dmg = anim.type==='light' ? (4+Math.random()*5) : (11+Math.random()*8);
+      if(opponent.blocking) dmg *= 0.22;
       opponent.hp = Math.max(0, opponent.hp - dmg);
+      
+      // Distribute damage to body parts
+      const bodyParts = ['head', 'body', 'legs'];
+      const hitPart = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+      opponent.statDamage[hitPart] += (dmg * 0.3); // 30% of damage goes to that body part
+      
       flashHit(opponent);
       updateHpUI();
       if(opponent.hp<=0 && !matchOver){
         triggerKO(opponent, f);
       }
     }
+  }
+
+  // Deplete stamina on attack
+  if(p > 0 && p < 1) {
+    f.stamina -= (anim.type==='light' ? 0.8 : 1.5) * (1/anim.dur);
+    f.stamina = Math.max(0, f.stamina);
   }
 
   if(p>=1){
@@ -1565,10 +1691,40 @@ function flashHit(f){
 function updateHpUI(){
   document.getElementById('p1Pct').textContent = Math.ceil(p1F.hp);
   document.getElementById('p2Pct').textContent = Math.ceil(p2F.hp);
-  const p1pct = Math.max(0, Math.min(100, (p1F.hp / (p1F.maxHp||100)) * 100));
-  const p2pct = Math.max(0, Math.min(100, (p2F.hp / (p2F.maxHp||100)) * 100));
-  document.getElementById('p1Fill').style.width = p1pct + '%';
-  document.getElementById('p2Fill').style.width = p2pct + '%';
+  document.getElementById('p1Fill').style.width = p1F.hp+'%';
+  document.getElementById('p2Fill').style.width = p2F.hp+'%';
+}
+
+function updateFightHUD(){
+  if(!p1F || !p2F) return;
+  // Update stamina (recovers slowly over time)
+  p1F.stamina = Math.min(100, p1F.stamina + 0.15);
+  p2F.stamina = Math.min(100, p2F.stamina + 0.15);
+  document.getElementById('p1Stamina').style.width = p1F.stamina + '%';
+  document.getElementById('p2Stamina').style.width = p2F.stamina + '%';
+  
+  // Update stat damage (head, body, legs as percentage remaining)
+  const p1HeadHealth = Math.max(0, 100 - p1F.statDamage.head);
+  const p1BodyHealth = Math.max(0, 100 - p1F.statDamage.body);
+  const p1LegsHealth = Math.max(0, 100 - p1F.statDamage.legs);
+  document.getElementById('p1Head').textContent = p1HeadHealth;
+  document.getElementById('p1Body').textContent = p1BodyHealth;
+  document.getElementById('p1Legs').textContent = p1LegsHealth;
+  
+  const p2HeadHealth = Math.max(0, 100 - p2F.statDamage.head);
+  const p2BodyHealth = Math.max(0, 100 - p2F.statDamage.body);
+  const p2LegsHealth = Math.max(0, 100 - p2F.statDamage.legs);
+  document.getElementById('p2Head').textContent = p2HeadHealth;
+  document.getElementById('p2Body').textContent = p2BodyHealth;
+  document.getElementById('p2Legs').textContent = p2LegsHealth;
+  
+  // Update block meter (depletes when blocking, recovers when not)
+  if(p1F.blocking) p1F.blockMeter = Math.max(0, p1F.blockMeter - 1.5);
+  else p1F.blockMeter = Math.min(100, p1F.blockMeter + 1.2);
+  if(p2F.blocking) p2F.blockMeter = Math.max(0, p2F.blockMeter - 1.5);
+  else p2F.blockMeter = Math.min(100, p2F.blockMeter + 1.2);
+  document.getElementById('p1Block').style.width = p1F.blockMeter + '%';
+  document.getElementById('p2Block').style.width = p2F.blockMeter + '%';
 }
 
 function facePlayers(){
@@ -1650,6 +1806,11 @@ function fightLoop(){
   requestAnimationFrame(fightLoop);
   const dt = Math.min(0.05, clock.getDelta());
 
+  if(gamePaused){
+    fRenderer.render(fScene, fCamera);
+    return;
+  }
+
   if(fightActive && !matchOver){
     const m1 = updatePlayerControls(p1F, p2F, P1_KEYS, dt);
     const m2 = updateCPU(p2F, p1F, dt);
@@ -1668,6 +1829,19 @@ function fightLoop(){
     updateWalkPose(p2F, m2);
     updateAttackAnim(p1F, p2F, dt);
     updateAttackAnim(p2F, p1F, dt);
+    if(grappleActive){
+      grappleTimer -= dt;
+      if(grappleTimer <= 0) grappleActive = false;
+      else {
+        const pullDir = new THREE.Vector3().subVectors(p2F.group.position, p1F.group.position);
+        if(pullDir.lengthSq() > 0.0001){
+          pullDir.normalize();
+          p1F.group.position.addScaledVector(pullDir, 0.18*dt*2.5);
+          p2F.group.position.addScaledVector(pullDir.clone().negate(), 0.18*dt*2.5);
+        }
+      }
+    }
+    updateFightHUD();
 
     timeLeft -= dt;
     if(timeLeft<=0){
